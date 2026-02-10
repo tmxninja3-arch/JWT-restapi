@@ -48,22 +48,5 @@ $router->post('/api/patients', [PatientController::class, 'store']);
 $router->put('/api/patients/{id}', [PatientController::class, 'update']);
 $router->delete('/api/patients/{id}', [PatientController::class, 'destroy']);
 
-// Test route
-$router->get('/', function() {
-    header('Content-Type: application/json');
-    echo json_encode([
-        'message' => 'JWT REST API is running',
-        'endpoints' => [
-            'POST /api/register' => 'Register new user',
-            'POST /api/login' => 'Login user',
-            'GET /api/patients' => 'Get all patients (protected)',
-            'GET /api/patients/{id}' => 'Get patient by ID (protected)',
-            'POST /api/patients' => 'Create patient (protected)',
-            'PUT /api/patients/{id}' => 'Update patient (protected)',
-            'DELETE /api/patients/{id}' => 'Delete patient (protected)'
-        ]
-    ]);
-});
-
 // Dispatch request
 $router->dispatch();
