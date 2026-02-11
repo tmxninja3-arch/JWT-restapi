@@ -4,39 +4,39 @@ namespace App\Core;
 class Router {
     private $routes = [];
     private $middlewares = [];
-    
+
     public function addMiddleware($middleware) {
         $this->middlewares[] = $middleware;
     }
-    
+
     public function get($path, $handler) {
         $this->routes['GET'][$path] = $handler;
     }
-    
+
     public function post($path, $handler) {
         $this->routes['POST'][$path] = $handler;
     }
-    
+
     public function put($path, $handler) {
         $this->routes['PUT'][$path] = $handler;
     }
-    
+
     public function delete($path, $handler) {
         $this->routes['DELETE'][$path] = $handler;
     }
-    
+
     public function dispatch() {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        
+
         // Remove base path if project is in subdirectory
         $basePath = '/project-jwt';
         if (strpos($uri, $basePath) === 0) {
             $uri = substr($uri, strlen($basePath));
         }
-        
+
         $uri = $uri ?: '/';
-        
+
         // Initialize request object
         $request = [
             'method' => $method,
@@ -44,7 +44,7 @@ class Router {
             'headers' => getallheaders(),
             'body' => null
         ];
-        
+
         // Run middlewares
         foreach ($this->middlewares as $middleware) {
             $result = $middleware->handle($request);
@@ -55,7 +55,7 @@ class Router {
                 $request = $result;
             }
         }
-        
+
         // Check for exact match
         if (isset($this->routes[$method][$uri])) {
             $handler = $this->routes[$method][$uri];
@@ -64,11 +64,11 @@ class Router {
             // Check for dynamic routes
             $handler = null;
             $params = [];
-            
+
             foreach ($this->routes[$method] ?? [] as $route => $routeHandler) {
                 $pattern = preg_replace('/\{([^}]+)\}/', '([^/]+)', $route);
                 $pattern = '#^' . $pattern . '$#';
-                
+
                 if (preg_match($pattern, $uri, $matches)) {
                     $handler = $routeHandler;
                     array_shift($matches);
@@ -77,7 +77,7 @@ class Router {
                 }
             }
         }
-        
+
         if ($handler) {
             if (is_array($handler)) {
                 $controller = new $handler[0]();

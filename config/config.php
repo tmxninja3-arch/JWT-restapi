@@ -20,7 +20,8 @@ define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // JWT configuration
 define('JWT_SECRET', getenv('JWT_SECRET') ?: 'default_secret_key');
-define('JWT_EXPIRY', getenv('JWT_EXPIRY') ?: 3600);
+define('JWT_EXPIRY', (int)(getenv('JWT_EXPIRY') ?: 900)); // 15 minutes
+define('REFRESH_TOKEN_EXPIRY', (int)(getenv('REFRESH_TOKEN_EXPIRY') ?: 604800)); // 7 days
 
 // Enable error reporting for development
 error_reporting(E_ALL);
